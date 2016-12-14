@@ -21,6 +21,12 @@ func NewEditor(filePrefix, topic, message string) (editor *Editor, err error) {
 		return
 	}
 
+	mtime, err := os.Stat(messageFile)
+	if err != nil {
+		// File does not yet exist
+		mtime = nil
+	}
+
 	program, err := git.Editor()
 	if err != nil {
 		return
@@ -32,6 +38,7 @@ func NewEditor(filePrefix, topic, message string) (editor *Editor, err error) {
 		Program:    program,
 		Topic:      topic,
 		File:       messageFile,
+		FileMtime:  mtime,
 		Message:    message,
 		CS:         cs,
 		openEditor: openTextEditor,
@@ -44,6 +51,7 @@ type Editor struct {
 	Program    string
 	Topic      string
 	File       string
+	FileMtime  os.FileInfo
 	Message    string
 	CS         string
 	openEditor func(program, file string) error

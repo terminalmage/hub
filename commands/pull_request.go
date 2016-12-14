@@ -237,6 +237,15 @@ func pullRequest(cmd *Command, args *Args) {
 
 		title, body, err = editor.EditTitleAndBody()
 		utils.Check(err)
+
+		if editor.FileMtime != nil {
+			mtime, err := os.Stat(editor.File)
+			if err != nil {
+				if mtime != editor.FileMtime {
+					utils.Check(fmt.Errorf("Buffer was not saved, aborting."))
+				}
+			}
+		}
 	}
 
 	if title == "" && flagPullRequestIssue == "" {
